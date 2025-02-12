@@ -22,8 +22,6 @@ function main {
     install
     check-nixetc
 
-    # Go back home
-    cd "$owd"
 }
 
 function create-paths {
@@ -42,7 +40,7 @@ function create-paths {
     cp "$homepath"/hosts/sample-host/default.nix "$homepath"/hosts/"$hostname"/default.nix
     # Create a file with the host name of the current machine
     nix eval --impure --expr 'builtins.currentSystem' > "$homepath"/hosts/"$hostname"/arch.nix
-    sed -i "s/your_username/$USER/" flake.lock
+    sed -i "s/your_username/$USER/" "$homepath"/flake.nix
 }
 
 function install {
@@ -60,6 +58,8 @@ function install {
     git init
     git add -A
     git commit -m 'initial commit'
+    # Go back home
+    cd "$owd"
 }
 
 function check-nixetc {

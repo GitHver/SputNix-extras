@@ -62,11 +62,14 @@ localization() {
     read selected_language
 
     echo "use another language for formatting? (time, date, messurments, currency, etc)"
-    inputAccept || return
+    inputAccept "use other formatting?" || return
 
     printf "Type in your language to use for formatting: "
     read selected_formatting
-    
+
+    printf "Type in your keyboard language layout: "
+    read keyboard_layout
+
     # confirm choice
     # timedatectl list-timezones
     # read time_zone
@@ -115,6 +118,7 @@ installation() {
     sed -i "s/language-locale/$selected_language/" ./configs/configuration.nix
     sed -i "s/formatting-locale/${selected_formatting:-$selected_language}/" \
     ./configs/configuration.nix
+    sed -i "s/keyboard-layout/$keyboard_layout/" ./configs/configuration.nix
 
     # Set the correct disktype
     sed -i "s,/dev/disktype,/dev/$disktype," ./hosts/"$host_name"/disko.nix
