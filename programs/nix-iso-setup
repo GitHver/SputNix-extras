@@ -36,8 +36,8 @@ partitioning() {
     # echo "is this the correct disk?: $disktype"
     # input-accept
     # done
-    printf "Do you want your filesystem to be encrypted?"
-    inputAccept || return
+    printf "Do you want your filesystem to be encrypted?\n"
+    inputAccept "encrypt?" || return
     encrypt=true
 
     # while true; do
@@ -140,9 +140,9 @@ installation() {
 
 # This function can be called to take input from the user on whether to proceed.
 inputAccept() {
-    message="${1:=continue?}"
+    # message="${1:=continue?}"
     for i in 1 2 3; do 
-        echo -n "$message [Y/N]: " >& 2
+        echo -n "${1:-continue?} [Y/N]: " >& 2
         read input
         case $input in
         [yY]) return 0 ;;
