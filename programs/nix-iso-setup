@@ -1,4 +1,4 @@
-#! /usr/bin/env sh
+#! /usr/bin/env bash
 # set -eu # -o pipefail # Undefined in POSIX shell.
 
 repo="SputNix"
@@ -87,9 +87,12 @@ testallation() {
         encryption = $encrypt
     }
     "
-    echo "are these values correct? exit and run the program again redo."
+    echo "are these values correct? exit and run the program again to redo."
     inputAccept
-    echo "done!"
+    echo "use low resource mode? this can be usefull for older hardware with"
+    echo "8GB of memory or less as to not run out of memory when building the system."
+    echo "This will make the install take a longer time."
+    inputAccept "use low resource mode?" && options="--max-jobs 1"
 }
 
 installation() {
@@ -98,16 +101,20 @@ installation() {
     rm -rf .git
 
     # rename user
-    sed -i "s/your_username/$user_name/" ./hosts/your-hostname/users/your-user.nix
-    sed -i "s/your_displayname/${display_name:=$user_name}/" ./hosts/your-hostname/users/your-user.nix
-    mv ./hosts/your-hostname/users/your-user.nix ./hosts/your-hostname/users/"$user_name".nix
+    sed -i "s/your_username/$user_name/" \
+    ./hosts/your-hostname/users/your-user.nix
+    sed -i "s/your_displayname/${display_name:=$user_name}/" \
+    ./hosts/your-hostname/users/your-user.nix
+    mv ./hosts/your-hostname/users/your-user.nix \
+    ./hosts/your-hostname/users/"$user_name".nix
 
     # rename host
     mv ./hosts/your-hostname ./hosts/"$host_name"
 
     # change locale
     sed -i "s/language-locale/$selected_language/" ./configs/configuration.nix
-    sed -i "s/formatting-locale/${selected_formatting:-$selected_language}/" ./configs/configuration.nix
+    sed -i "s/formatting-locale/${selected_formatting:-$selected_language}/" \
+    ./configs/configuration.nix
 
     # Set the correct disktype
     sed -i "s,/dev/disktype,/dev/$disktype," ./hosts/"$host_name"/disko.nix
@@ -116,7 +123,9 @@ installation() {
     fi
 
     # mounting the disk
-    sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode destroy,format,mount ./hosts/"$host_name"/disko.nix
+    sudo nix --experimental-features "nix-command flakes" run \
+    github:nix-community/disko -- --mode destroy,format,mount \
+    ./hosts/"$host_name"/disko.nix
 
     # Moving the repository
     sudo nixos-generate-config --no-filesystems --root /mnt
@@ -126,13 +135,14 @@ installation() {
     sudo rm ./configuration.nix
 
     # Start the install
-    sudo nixos-install --flake .#"$host_name"
+    sudo nixos-install --flake .#"$host_name" $options
 }
 
 # This function can be called to take input from the user on whether to proceed.
 inputAccept() {
+    message="${1:=continue?}"
     for i in 1 2 3; do 
-        printf "continue? [Y/N]: " >& 2
+        echo -n "$message [Y/N]: " >& 2
         read input
         case $input in
         [yY]) return 0 ;;
