@@ -76,8 +76,8 @@
       attrsForEach (getBaseFileNames ./shells) (shell: {
         ${shell} = import ./shells/${shell}.nix { inherit pkgs; };
       })
-      # Here you can set the default package (built with `nix develop`)
-      // { default = import ./shells/isoShell.nix { inherit pkgs; }; }
+      # # Here you can set the default package (built with `nix develop`)
+      # // { default = import ./shells/isoShell.nix { inherit pkgs; }; }
     );
 
     #====<< Packages >>========================================================>
@@ -90,8 +90,8 @@
       attrsForEach (getBaseFileNames ./packages) (package: {
         ${package} = import ./packages/${package}.nix { inherit pkgs; };
       })
-      # Here you can set the default package (built with `nix build`)
-      // { default = import ./packages/nix-iso-setup.nix { inherit pkgs; }; }
+      # # Here you can set the default package (built with `nix build`)
+      # // { default = import ./packages/nix-iso-setup.nix { inherit pkgs; }; }
     );
 
     #====<< Applications >>====================================================>
@@ -99,14 +99,14 @@
     # `nix run .#<name-of-application>`. As you can only "run" applications,
     # other packages like theme sets or program extensions like plugins cannot
     # be applications. Other than that they are identical.
-    apps = genEachArch (system:
-    let pkgs = import nixpkgs { inherit system; }; in
-      attrsForEach (getBaseFileNames ./packages) (package: {
-        ${package} = import ./packages/${package}.nix { inherit pkgs; };
-      })
-      # Here you can set the default package (built with `nix build`)
-      // { default = import ./packages/nix-iso-setup.nix { inherit pkgs; }; }
-    );
+    # apps = genEachArch (system:
+    # let pkgs = import nixpkgs { inherit system; }; in
+    #   attrsForEach (getBaseFileNames ./packages) (package: {
+    #     ${package} = import ./packages/${package}.nix { inherit pkgs; };
+    #   })
+    #   # Here you can set the default package (built with `nix build`)
+    #   // { default = import ./packages/nix-iso-setup.nix { inherit pkgs; }; }
+    # );
 
     #====<< Literally Anything >>==============================================>
     # The ouputs set can contain anything you want, the above are just things
