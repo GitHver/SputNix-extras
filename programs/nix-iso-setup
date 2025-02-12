@@ -5,7 +5,7 @@ repo="SputNix"
 
 main() {
     # Clone the repository
-    git clone https://github.com/GitHver/nixisotemp.git ./"$repo"
+    git clone https://github.com/GitHver/"$repo".git ./"$repo"
 
     # Get variables to replace in file
     userandhost
@@ -77,6 +77,7 @@ testallation() {
     echo "${display_name:=$user_name}" > /dev/null
     echo "${selected_formatting:=$selected_language}" > /dev/null
     echo "
+    {
         hostname = $host_name,
         username = $user_name,
         displayame = $display_name,
@@ -84,8 +85,10 @@ testallation() {
         formatting = $selected_formatting,
         disk to mount = $disktype,
         encryption = $encrypt
-    " 
-    sleep 5
+    }
+    "
+    echo "are these values correct? exit and run the program again redo."
+    inputAccept
     echo "done!"
 }
 
@@ -113,7 +116,7 @@ installation() {
     fi
 
     # mounting the disk
-    sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko ./hosts/"$host_name"/disko.nix
+    sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode destroy,format,mount ./hosts/"$host_name"/disko.nix
 
     # Moving the repository
     sudo nixos-generate-config --no-filesystems --root /mnt
